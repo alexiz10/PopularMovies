@@ -1,3 +1,44 @@
 <resources>
-    <string name="app_name">PopularMovies</string>
+    <string name="app_name" translatable="false">PopularMovies</string>
+    <string name="settings_activity">Settings</string>
+    <string name="details_activity">Details</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="pref_sort_label">Sort by</string>
+    <string name="pref_sort_label_popularity">Popularity</string>
+    <string name="pref_sort_label_rating">Rating</string>
+
+    <string name="pref_sort_key" translatable="false">sort</string>
+    <string name="pref_sort_key_popularity" translatable="false">popular</string>
+    <string name="pref_sort_key_rating" translatable="false">top_rated</string>
+
+    <string name="pref_favorites_only_label">Show favorites only</string>
+    <string name="pref_favorites_only_key" translatable="false">favorites_only</string>
+    <string name="pref_favorites_only_summary">Show favorite movies only</string>
+
+    <string name="error_message" translatable="false">Could not load movies.</string>
+    <string name="error_message_loading_movies">An error occurred when loading movies. Please try again.</string>
+    <string name="error_message_favorite_movies">You don\'t seem to have any favorite movies. Try adding some and coming back to this screen.</string>
+    <string name="review_error_message">Could not load reviews.</string>
+    <string name="trailer_error_message">Could not load trailers.</string>
+
+    <string name="details_movie_poster_description">Movie Poster</string>
+    <string name="details_movie_backdrop_description">Movie Backdrop Image</string>
+    <string name="details_movie_title" translatable="false">Movie Title</string>
+    <string name="details_movie_release_date" translatable="false">April 2, 2015</string>
+    <string name="details_movie_rating" translatable="false">4.5/10</string>
+    <string name="details_movie_synopsis" translatable="false">After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to undo Thanos' actions and restore order to the universe.</string>
+
+    <string name="trailers">Trailers</string>
+    <string name="reviews">Reviews</string>
+
+    <string name="details_remove_from_favorites">Remove from Favorites</string>
+    <string name="details_add_to_favorites">Add to Favorites</string>
+
+    <string name="favorite_movie_could_not_be_removed_from_favorites"> could not be removed from favorites.</string>
+    <string name="favorite_movie_could_not_be_added_to_favorites"> could not be added to favorites.</string>
+
+    <string name="review_dialog_author_placeholder" translatable="false">Author Name</string>
+    <string name="review_dialog_content_placeholder" translatable="false">Sample content review.</string>
 </resources>

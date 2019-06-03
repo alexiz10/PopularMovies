@@ -16,7 +16,7 @@ public class NetworkUtils {
 
     // The Movie DB API key information
     private static final String API_KEY_PARAM = "api_key";
-    private static final String API_KEY = "";
+    private static final String API_KEY = "8a388f15d989ddf243f89224d71de2db";
 
     // Base URLs for fetching movies or movie reviews/trailers
     private static final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie";

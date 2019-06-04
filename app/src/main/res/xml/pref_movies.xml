@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="@string/pref_sort_key_popularity"
+        android:entries="@array/pref_sort_labels"
+        android:entryValues="@array/pref_sort_values"
+        android:key="@string/pref_sort_key"
+        android:title="@string/pref_sort_label" />
+
+    <CheckBoxPreference
+        android:title="@string/pref_favorites_only_label"
+        android:key="@string/pref_favorites_only_key"
+        android:summary="@string/pref_favorites_only_summary"
+        android:defaultValue="@bool/pref_favorites_only_default" />
+
+</PreferenceScreen>

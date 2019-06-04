@@ -17,7 +17,7 @@
             android:id="@+id/iv_detail_backdrop_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:contentDescription="@string/details_movie_backdrop_description" />
 
         <LinearLayout

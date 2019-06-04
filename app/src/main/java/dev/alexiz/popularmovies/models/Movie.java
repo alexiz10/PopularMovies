@@ -81,7 +81,7 @@ public class Movie implements Parcelable {
     }
 
     public String getBackdropPath() {
-        return this.posterPath;
+        return this.backdropPath;
     }
 
     public String getSynopsis() {

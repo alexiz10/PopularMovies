@@ -103,7 +103,7 @@ public class NetworkUtils {
     // Builds Uri for specific movie's poster image
     public static Uri buildPosterUri(String posterPath) {
         return Uri.parse(IMAGES_BASE_URL).buildUpon()
-                .appendPath(IMAGE_SIZE_W185)
+                .appendPath(IMAGE_SIZE_W780)
                 .appendEncodedPath(posterPath)
                 .build();
     }

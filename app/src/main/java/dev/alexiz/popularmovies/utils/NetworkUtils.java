@@ -59,6 +59,23 @@ public class NetworkUtils {
         return url;
     }
 
+    // Builds URL to fetch a specific movie's trailers from The Movie DB
+    public static URL buildTrailersUrl(String id) {
+        Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
+                .appendPath(id)
+                .appendPath(TRAILERS_PATH)
+                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
     // Builds URL to fetch a specific movie's reviews from The Movie DB
     public static URL buildReviewsURL(String id) {
         Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()

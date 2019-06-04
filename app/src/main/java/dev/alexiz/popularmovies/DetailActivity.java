@@ -1,6 +1,9 @@
 package dev.alexiz.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -24,9 +28,11 @@ import java.util.Objects;
 
 import dev.alexiz.popularmovies.adapters.ReviewAdapter;
 import dev.alexiz.popularmovies.adapters.TrailerAdapter;
+import dev.alexiz.popularmovies.data.PopularMoviesContract.FavoriteEntry;
 import dev.alexiz.popularmovies.models.Movie;
 import dev.alexiz.popularmovies.models.Review;
 import dev.alexiz.popularmovies.models.Trailer;
+import dev.alexiz.popularmovies.utils.JsonUtils;
 import dev.alexiz.popularmovies.utils.NetworkUtils;
 
 public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler,
@@ -198,11 +204,37 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     }
 
     private void addMovieToFavorites() {
+        ContentValues values = new ContentValues();
+        values.put(FavoriteEntry.COLUMN_MOVIE_ID, this.movie.getId());
+        values.put(FavoriteEntry.COLUMN_MOVIE_TITLE, this.movie.getTitle());
+        values.put(FavoriteEntry.COLUMN_MOVIE_POSTER_PATH, this.movie.getPosterPath());
+        values.put(FavoriteEntry.COLUMN_MOVIE_BACKDROP_PATH, this.movie.getBackdropPath());
+        values.put(FavoriteEntry.COLUMN_MOVIE_SYNOPSIS, this.movie.getSynopsis());
+        values.put(FavoriteEntry.COLUMN_MOVIE_RELEASE_DATE, this.movie.getReleaseDate());
+        values.put(FavoriteEntry.COLUMN_MOVIE_RATING, this.movie.getRating());
+        values.put(FavoriteEntry.COLUMN_MOVIE_POPULARITY, this.movie.getPopularity());
 
+        Uri uri = getContentResolver().insert(FavoriteEntry.CONTENT_URI, values);
+
+        if (uri == null) {
+            Toast.makeText(getBaseContext(), this.movie.getTitle() + getString(R.string.favorite_movie_could_not_be_added_to_favorites), Toast.LENGTH_SHORT).show();
+        } else {
+            this.movieInFavorites = true;
+            setFavoriteButtonText();
+        }
     }
 
     private void removeMovieFromFavorites() {
+        int deleted = getContentResolver().delete(FavoriteEntry.CONTENT_URI,
+                FavoriteEntry.COLUMN_MOVIE_ID + " = " + this.movieId,
+                null);
 
+        if (deleted > 0) {
+            this.movieInFavorites = false;
+            setFavoriteButtonText();
+        } else {
+            Toast.makeText(getBaseContext(), this.movie.getTitle() + getString(R.string.favorite_movie_could_not_be_removed_from_favorites), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String formatDate(String date) {
@@ -236,7 +268,81 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
 
         @Override
         protected ArrayList<Trailer> doInBackground(Void... params) {
+            try {
+                URL trailersUrl = NetworkUtils.buildTrailersUrl(movieId);
 
+                String trailersResponse = NetworkUtils.getResponseFromHttp(trailersUrl);
+
+                return JsonUtils.getTrailers(trailersResponse);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+    }
+
+    private class FetchMovieReviewsTask extends AsyncTask<Void, Void, ArrayList<Review>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            reviewsLoadingIndicator.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Review> reviews) {
+            reviewsLoadingIndicator.setVisibility(View.INVISIBLE);
+            if (reviews != null && !reviews.isEmpty()) {
+                showReviews();
+                reviewAdapter.setReviewData(reviews);
+            } else {
+                showReviewErrorMessage();
+            }
+        }
+
+        @Override
+        protected ArrayList<Review> doInBackground(Void... params) {
+            try {
+                URL reviewsUrl = NetworkUtils.buildReviewsURL(movieId);
+
+                String reviewsResponse = NetworkUtils.getResponseFromHttp(reviewsUrl);
+
+                return JsonUtils.getReviews(reviewsResponse);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+    }
+
+    private class CheckMovieInFavoritesTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            Cursor cursor = null;
+            try {
+                cursor = getContentResolver().query(FavoriteEntry.CONTENT_URI,
+                        null,
+                        FavoriteEntry.COLUMN_MOVIE_ID + "=?",
+                        new String[]{movieId},
+                        null);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+            return !(cursor == null || cursor.getCount() < 1);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            movieInFavorites = aBoolean;
+            setFavoriteButtonText();
         }
 
     }

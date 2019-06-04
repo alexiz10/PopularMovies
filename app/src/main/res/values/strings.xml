@@ -28,7 +28,7 @@
     <string name="details_movie_title" translatable="false">Movie Title</string>
     <string name="details_movie_release_date" translatable="false">April 2, 2015</string>
     <string name="details_movie_rating" translatable="false">4.5/10</string>
-    <string name="details_movie_synopsis" translatable="false">After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to undo Thanos' actions and restore order to the universe.</string>
+    <string name="details_movie_synopsis" translatable="false">After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to undo Thanos\' actions and restore order to the universe.</string>
 
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>

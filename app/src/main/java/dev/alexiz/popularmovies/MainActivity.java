@@ -3,6 +3,7 @@ package dev.alexiz.popularmovies;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import dev.alexiz.popularmovies.adapters.MovieAdapter;
+import dev.alexiz.popularmovies.data.PopularMoviesContract.FavoriteEntry;
 import dev.alexiz.popularmovies.models.Movie;
 import dev.alexiz.popularmovies.utils.JsonUtils;
 import dev.alexiz.popularmovies.utils.NetworkUtils;
@@ -96,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void loadFavoriteMovieData() {
         showMovies();
 
-//        new FetchFavoriteMovieDataTask().execute();
+        new FetchFavoriteMovieDataTask().execute();
     }
 
     private void showMovies() {
@@ -190,6 +192,63 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 String response = NetworkUtils.getResponseFromHttp(requestUrl);
 
                 return JsonUtils.getMovies(response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+    }
+
+    public class FetchFavoriteMovieDataTask extends AsyncTask<Void, Void, ArrayList<Movie>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loadingIndicator.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Movie> movies) {
+            loadingIndicator.setVisibility(View.INVISIBLE);
+            if (movies != null && !movies.isEmpty()) {
+                showMovies();
+                adapter.setMovieData(movies);
+            } else {
+                showErrorMessage();
+            }
+        }
+
+        @Override
+        protected ArrayList<Movie> doInBackground(Void... params) {
+            ArrayList<Movie> movies = new ArrayList<>();
+
+            try {
+                Cursor cursor = getApplicationContext().getContentResolver().query(FavoriteEntry.CONTENT_URI,
+                        null,
+                        null,
+                        null,
+                        null);
+
+                if (cursor != null) {
+                    int idColumn = cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_ID);
+                    int titleColumn = cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_TITLE);
+                    int posterPathColumn = cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_POSTER_PATH);
+                    int backdropPathColumn = cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_BACKDROP_PATH);
+                    int synopsisColumn = cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_SYNOPSIS);
+                    int releaseDateColumn = cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_RELEASE_DATE);
+                    int ratingColumn = cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_RATING);
+                    int popularityColumn = cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_POPULARITY);
+
+                    while (cursor.moveToNext()) {
+                        movies.add(new Movie(cursor.getInt(idColumn), cursor.getString(titleColumn),
+                                cursor.getString(posterPathColumn), cursor.getString(backdropPathColumn),
+                                cursor.getString(synopsisColumn), cursor.getString(releaseDateColumn),
+                                cursor.getDouble(ratingColumn), cursor.getFloat(popularityColumn)));
+                    }
+                    cursor.close();
+                }
+                return movies;
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;

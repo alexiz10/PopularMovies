@@ -37,7 +37,7 @@
                     android:contentDescription="@string/details_movie_poster_description"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/poster-placeholder" />
+                    app:srcCompat="@drawable/poster_placeholder" />
 
                 <TextView
                     android:id="@+id/tv_detail_title"

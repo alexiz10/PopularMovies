@@ -16,8 +16,8 @@
         <ImageView
             android:id="@+id/iv_detail_backdrop_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
             android:contentDescription="@string/details_movie_backdrop_description" />
 
         <LinearLayout
@@ -32,7 +32,7 @@
 
                 <ImageView
                     android:id="@+id/iv_detail_image"
-                    android:layout_width="wrap_content"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/details_movie_poster_description"
                     app:layout_constraintStart_toStartOf="parent"

@@ -73,7 +73,8 @@ public class JsonUtils {
 
         for (int i = 0; i < jsonTrailerObjects.length(); i++) {
             JSONObject current = jsonTrailerObjects.getJSONObject(i);
-            if (!current.getString(TRAILER_TYPE_KEY).equalsIgnoreCase("trailer")) {
+            if (!current.getString(TRAILER_TYPE_KEY).equalsIgnoreCase("trailer") ||
+                    !current.getString(TRAILER_SITE_KEY).equalsIgnoreCase("youtube")) {
                 continue;
             }
 

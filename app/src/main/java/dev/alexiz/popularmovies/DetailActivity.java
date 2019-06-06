@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -16,20 +18,28 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.lang.ref.WeakReference;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import dev.alexiz.popularmovies.data.PopularMoviesContract.FavoriteEntry;
 import dev.alexiz.popularmovies.models.Movie;
+import dev.alexiz.popularmovies.models.Trailer;
+import dev.alexiz.popularmovies.utils.JsonUtils;
 import dev.alexiz.popularmovies.utils.NetworkUtils;
 
 public class DetailActivity extends AppCompatActivity {
 
     private static final String MOVIE_INTENT_KEY = "movie";
+    private static final String TRAILER_INTENT_KEY = "trailer";
 
     private Movie movie;
+
+    private Trailer movieTrailer;
 
     private String movieId;
 
@@ -69,7 +79,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
 
-        new CheckMovieInFavoritesTask().execute();
+        new CheckMovieInFavoritesTask(this).execute();
 
         this.favoriteButton = findViewById(R.id.btn_detail_favorite);
         this.favoriteButton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +90,22 @@ public class DetailActivity extends AppCompatActivity {
                 } else {
                     addMovieToFavorites();
                 }
+            }
+        });
+
+        findViewById(R.id.details_back_fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateHome();
+            }
+        });
+
+        new FetchMovieTrailerTask(this).execute();
+
+        findViewById(R.id.details_trailer_fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playTrailer();
             }
         });
     }
@@ -129,23 +155,77 @@ public class DetailActivity extends AppCompatActivity {
     private String formatDate(String date) {
         Date currentDate = null;
         try {
-            currentDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+            currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return new SimpleDateFormat("MMM dd, yyyy").format(currentDate);
+        return new SimpleDateFormat("MMM dd, yyyy", Locale.US).format(currentDate);
     }
 
-    private class CheckMovieInFavoritesTask extends AsyncTask<Void, Void, Boolean> {
+    private void playTrailer() {
+        Intent intentToYouTubePlayer = new Intent(this, YouTubePlayerActivity.class);
+        intentToYouTubePlayer.putExtra(TRAILER_INTENT_KEY, movieTrailer.getKey());
+        startActivity(intentToYouTubePlayer);
+    }
+
+    private void navigateHome() {
+        NavUtils.navigateUpFromSameTask(this);
+    }
+
+    private static class FetchMovieTrailerTask extends AsyncTask<Void, Void, Trailer> {
+
+        private WeakReference<DetailActivity> activityReference;
+
+        FetchMovieTrailerTask(DetailActivity context) {
+            this.activityReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected Trailer doInBackground(Void... params) {
+            DetailActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return null;
+            try {
+                URL trailersUrl = NetworkUtils.buildTrailersUrl(activity.movieId);
+
+                String trailersResponse = NetworkUtils.getResponseFromHttp(trailersUrl);
+
+                return JsonUtils.getTrailer(trailersResponse);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Trailer trailer) {
+            if (trailer != null) {
+                DetailActivity activity = activityReference.get();
+                if (activity == null || activity.isFinishing()) return;
+                activity.movieTrailer = trailer;
+            }
+        }
+
+    }
+
+    private static class CheckMovieInFavoritesTask extends AsyncTask<Void, Void, Boolean> {
+
+        private WeakReference<DetailActivity> activityReference;
+
+        CheckMovieInFavoritesTask(DetailActivity context) {
+            this.activityReference = new WeakReference<>(context);
+        }
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            DetailActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return false;
+
             Cursor cursor = null;
             try {
-                cursor = getContentResolver().query(FavoriteEntry.CONTENT_URI,
+                cursor = activity.getContentResolver().query(FavoriteEntry.CONTENT_URI,
                         null,
                         FavoriteEntry.COLUMN_MOVIE_ID + "=?",
-                        new String[]{movieId},
+                        new String[]{activity.movieId},
                         null);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -160,8 +240,11 @@ public class DetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
-            movieInFavorites = aBoolean;
-            setFavoriteButtonText();
+            DetailActivity activity = activityReference.get();
+            if (activity == null || activity.isFinishing()) return;
+
+            activity.movieInFavorites = aBoolean;
+            activity.setFavoriteButtonText();
         }
 
     }

@@ -15,23 +15,15 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     // The Movie DB API key information
-    private static final String API_KEY_PARAM = "api_key";
-    private static final String API_KEY = "8a388f15d989ddf243f89224d71de2db";
+    private static final String TMDB_API_KEY_PARAM = "api_key";
+    private static final String TMDB_API_KEY = "8a388f15d989ddf243f89224d71de2db";
 
     // Base URLs for fetching movies or movie reviews/trailers
     private static final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie";
     private static final String IMAGES_BASE_URL = "http://image.tmdb.org/t/p";
-    private static final String TRAILERS_BASE_URL = "http://www.youtube.com/watch";
-    private static final String TRAILERS_THUMBNAIL_BASE_URL = "http://img.youtube.com/vi";
 
     // Path for trailers in The Movie DB
     private static final String TRAILERS_PATH = "videos";
-
-    // YouTube video thumbnail file name
-    private static final String TRAILERS_THUMBNAIL_FILE_NAME = "mqdefault.jpg";
-
-    // YouTube video parameter
-    private static final String TRAILERS_KEY_PARAM = "v";
 
     // Movie poster and backdrop file sizes
     private static final String IMAGE_SIZE_W92 = "w92";
@@ -46,7 +38,7 @@ public class NetworkUtils {
     public static URL buildQueryUrl(String sortQuery) {
         Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
                 .appendPath(sortQuery)
-                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .appendQueryParameter(TMDB_API_KEY_PARAM, TMDB_API_KEY)
                 .build();
 
         URL url = null;
@@ -63,7 +55,7 @@ public class NetworkUtils {
         Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
                 .appendPath(id)
                 .appendPath(TRAILERS_PATH)
-                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .appendQueryParameter(TMDB_API_KEY_PARAM, TMDB_API_KEY)
                 .build();
 
         URL url = null;
@@ -73,13 +65,6 @@ public class NetworkUtils {
             e.printStackTrace();
         }
         return url;
-    }
-
-    // Builds trailer video URL for user to watch
-    public static Uri buildTrailerVideoUri(String key) {
-        return Uri.parse(TRAILERS_BASE_URL).buildUpon()
-                .appendQueryParameter(TRAILERS_KEY_PARAM, key)
-                .build();
     }
 
     // Builds Uri for specific movie's poster image
@@ -95,14 +80,6 @@ public class NetworkUtils {
         return Uri.parse(IMAGES_BASE_URL).buildUpon()
                 .appendPath(IMAGE_SIZE_W780)
                 .appendEncodedPath(backdropPath)
-                .build();
-    }
-
-    // Builds Uri for specific trailer's video thumbnail
-    public static Uri buildTrailerThumbnailUri(String key) {
-        return Uri.parse(TRAILERS_THUMBNAIL_BASE_URL).buildUpon()
-                .appendPath(key)
-                .appendPath(TRAILERS_THUMBNAIL_FILE_NAME)
                 .build();
     }
 

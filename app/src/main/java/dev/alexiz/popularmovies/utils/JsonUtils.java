@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import dev.alexiz.popularmovies.models.Movie;
-import dev.alexiz.popularmovies.models.Review;
 import dev.alexiz.popularmovies.models.Trailer;
 
 public class JsonUtils {
@@ -28,9 +27,6 @@ public class JsonUtils {
     private static final String TRAILER_NAME_KEY = "name";
     private static final String TRAILER_SITE_KEY = "site";
     private static final String TRAILER_TYPE_KEY = "type";
-
-    private static final String REVIEW_AUTHOR_KEY = "author";
-    private static final String REVIEW_CONTENT_KEY = "content";
 
     public static ArrayList<Movie> getMovies(String jsonResponseString) throws JSONException {
         JSONObject jsonResponse = new JSONObject(jsonResponseString);
@@ -70,18 +66,10 @@ public class JsonUtils {
         return movies;
     }
 
-    public static ArrayList<Trailer> getTrailers(String jsonResponseString) throws JSONException {
+    public static Trailer getTrailer(String jsonResponseString) throws JSONException {
         JSONObject jsonResponse = new JSONObject(jsonResponseString);
 
         JSONArray jsonTrailerObjects = jsonResponse.getJSONArray(RESULTS_KEY);
-
-        ArrayList<Trailer> trailers = new ArrayList<>();
-
-        String id;
-        String name;
-        String key;
-        String site;
-        String type;
 
         for (int i = 0; i < jsonTrailerObjects.length(); i++) {
             JSONObject current = jsonTrailerObjects.getJSONObject(i);
@@ -89,38 +77,16 @@ public class JsonUtils {
                 continue;
             }
 
-            id = current.getString(ID_KEY);
-            name = current.getString(TRAILER_NAME_KEY);
-            key = current.getString(TRAILER_KEY_KEY);
-            site = current.getString(TRAILER_SITE_KEY);
-            type = current.getString(TRAILER_TYPE_KEY);
+            String id = current.getString(ID_KEY);
+            String name = current.getString(TRAILER_NAME_KEY);
+            String key = current.getString(TRAILER_KEY_KEY);
+            String site = current.getString(TRAILER_SITE_KEY);
+            String type = current.getString(TRAILER_TYPE_KEY);
 
-            trailers.add(new Trailer(id, name, key, site, type));
+            return new Trailer(id, name, key, site, type);
+
         }
-        return trailers;
-    }
-
-    public static ArrayList<Review> getReviews(String jsonResponseString) throws JSONException {
-        JSONObject jsonResponse = new JSONObject(jsonResponseString);
-
-        JSONArray jsonReviewObjects = jsonResponse.getJSONArray(RESULTS_KEY);
-
-        ArrayList<Review> reviews = new ArrayList<>();
-
-        String id;
-        String author;
-        String content;
-
-        for (int i = 0; i < jsonReviewObjects.length(); i++) {
-            JSONObject current = jsonReviewObjects.getJSONObject(i);
-
-            id = current.getString(ID_KEY);
-            author = current.getString(REVIEW_AUTHOR_KEY);
-            content = current.getString(REVIEW_CONTENT_KEY);
-
-            reviews.add(new Review(id, author, content));
-        }
-        return reviews;
+        return null;
     }
 
 }

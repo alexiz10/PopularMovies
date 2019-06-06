@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private MovieAdapter adapter;
 
+    private FloatingActionButton settingsFab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +59,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         } else {
             layoutManager = new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false);
         }
+
+        this.settingsFab = findViewById(R.id.settings_fab);
+        this.settingsFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSettingsActivity();
+            }
+        });
 
         this.moviesRecyclerView = findViewById(R.id.rv_movies);
         this.moviesRecyclerView.setLayoutManager(layoutManager);
@@ -129,21 +140,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent startSettingsActivityIntent = new Intent(this, SettingsActivity.class);
-            startActivity(startSettingsActivityIntent);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    private void openSettingsActivity() {
+        Intent startSettingsActivityIntent = new Intent(this, SettingsActivity.class);
+        startActivity(startSettingsActivityIntent);
     }
 
     @Override

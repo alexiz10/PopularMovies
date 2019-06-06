@@ -24,9 +24,8 @@ public class NetworkUtils {
     private static final String TRAILERS_BASE_URL = "http://www.youtube.com/watch";
     private static final String TRAILERS_THUMBNAIL_BASE_URL = "http://img.youtube.com/vi";
 
-    // Paths for reviews and trailers in The Movie DB
+    // Path for trailers in The Movie DB
     private static final String TRAILERS_PATH = "videos";
-    private static final String REVIEWS_PATH = "reviews";
 
     // YouTube video thumbnail file name
     private static final String TRAILERS_THUMBNAIL_FILE_NAME = "mqdefault.jpg";
@@ -64,23 +63,6 @@ public class NetworkUtils {
         Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
                 .appendPath(id)
                 .appendPath(TRAILERS_PATH)
-                .appendQueryParameter(API_KEY_PARAM, API_KEY)
-                .build();
-
-        URL url = null;
-        try {
-            url = new URL(builtUri.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return url;
-    }
-
-    // Builds URL to fetch a specific movie's reviews from The Movie DB
-    public static URL buildReviewsURL(String id) {
-        Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
-                .appendPath(id)
-                .appendPath(REVIEWS_PATH)
                 .appendQueryParameter(API_KEY_PARAM, API_KEY)
                 .build();
 

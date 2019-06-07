@@ -163,9 +163,13 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void playTrailer() {
-        Intent intentToYouTubePlayer = new Intent(this, YouTubePlayerActivity.class);
-        intentToYouTubePlayer.putExtra(TRAILER_INTENT_KEY, movieTrailer.getKey());
-        startActivity(intentToYouTubePlayer);
+        if (this.movieTrailer.getId() != null && !this.movieTrailer.getId().isEmpty()) {
+            Intent intentToYouTubePlayer = new Intent(this, YouTubePlayerActivity.class);
+            intentToYouTubePlayer.putExtra(TRAILER_INTENT_KEY, movieTrailer.getKey());
+            startActivity(intentToYouTubePlayer);
+        } else {
+            Toast.makeText(this, getString(R.string.no_trailer_available_error), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void navigateHome() {

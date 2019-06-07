@@ -78,7 +78,7 @@ public class NetworkUtils {
     // Builds Uri for specific movie's backdrop image
     public static Uri buildBackdropUri(String backdropPath) {
         return Uri.parse(IMAGES_BASE_URL).buildUpon()
-                .appendPath(IMAGE_SIZE_W780)
+                .appendPath(IMAGE_SIZE_ORIGINAL)
                 .appendEncodedPath(backdropPath)
                 .build();
     }

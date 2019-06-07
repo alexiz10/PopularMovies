@@ -34,4 +34,5 @@
 
     <string name="favorite_movie_could_not_be_removed_from_favorites"> could not be removed from favorites.</string>
     <string name="favorite_movie_could_not_be_added_to_favorites"> could not be added to favorites.</string>
+    <string name="no_trailer_available_error">This movie does not have a trailer available</string>
 </resources>
